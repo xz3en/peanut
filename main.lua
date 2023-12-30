@@ -138,6 +138,9 @@ character.DescendantAdded:Connect(function(x)
 end)
 
 UserInputService.InputBegan:Connect(function(input: InputObject)
+
+	print(input)
+	
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		kill()
 	end
