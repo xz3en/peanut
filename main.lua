@@ -86,7 +86,7 @@ local SPEED = 50
 
 local runService = game:GetService("RunService")
 
-local character = owner.Character or owner.CharacterAdded:Wait()
+local character: Model = owner.Character or owner.CharacterAdded:Wait()
 
 local blink = false
 local blinked = false
@@ -97,7 +97,7 @@ for _,x in ipairs(character:GetDescendants()) do
 	if x:IsA("Accessory") or x:IsA("Decal") or x:IsA("Sound") then
 		x:Destroy()
 	end
-	
+
 	if x:IsA("BasePart") and x ~= humanoid.RootPart then
 		x.Transparency = 1
 	end
@@ -113,6 +113,20 @@ mesh.Scale *= 0.02
 mesh.Offset = Vector3.new(0,0.6,0)
 mesh.Parent = humanoid.RootPart
 
+local function kill()
+	local parts = workspace:GetPartBoundsInRadius(humanoid.RootPart.Position,2)
+	for _,part in ipairs(parts) do
+		if part:IsA("BasePart") then
+			local model = part:FindFirstAncestorWhichIsA("Model")
+			if model == character then continue end
+			local vHumanoid = model:FindFirstChildWhichIsA("Humanoid")
+			if not vHumanoid then continue end
+			vHumanoid:TakeDamage(math.huge)
+			break
+		end
+	end
+end
+
 character.DescendantAdded:Connect(function(x)
 	if x:IsA("Accessory") or x:IsA("Decal") then
 		x:Destroy()
@@ -124,8 +138,13 @@ character.DescendantAdded:Connect(function(x)
 end)
 
 mouse.Button1Down:Connect(function()
+	kill()
+end)
+
+mouse.Button2Down:Connect(function()
 	if blinked then
 		humanoid.RootPart.Position = mouse.Hit.Position + Vector3.new(0,3,0)
+		kill()
 		blinked = false
 	end
 end)
@@ -141,7 +160,7 @@ end)()
 
 runService.Heartbeat:Connect(function()
 	local shouldMove = true
-	
+
 	for _,human in ipairs(workspace:GetChildren()) do
 		local vHumanoid = human:FindFirstChildWhichIsA("Humanoid")
 		if not vHumanoid or not vHumanoid.RootPart then continue end
@@ -153,13 +172,14 @@ runService.Heartbeat:Connect(function()
 
 		local angle = math.deg(math.acos(dot))
 
-		if angle < 70 / 2 then
+		if angle < 90 / 2 then
 			shouldMove = false
 			break
 		end
 	end
-	
+
 	if shouldMove then
+		blinked = false
 		humanoid.WalkSpeed = SPEED
 	else
 		humanoid.WalkSpeed = 0
