@@ -137,15 +137,17 @@ character.DescendantAdded:Connect(function(x)
 	end
 end)
 
-mouse.Button1Down:Connect(function()
-	kill()
-end)
-
-mouse.Button2Down:Connect(function()
-	if blinked then
-		humanoid.RootPart.Position = mouse.Hit.Position + Vector3.new(0,3,0)
+UserInputService.InputBegan:Connect(function(input: InputObject)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		kill()
-		blinked = false
+	end
+	
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		if blinked then
+			humanoid.RootPart.Position = mouse.Hit.Position + Vector3.new(0,3,0)
+			kill()
+			blinked = false
+		end
 	end
 end)
 
@@ -170,7 +172,9 @@ runService.Heartbeat:Connect(function()
 
 		local dot = look:Dot(distance_from_player)
 
-		if angle > 0.6 then
+		local angle = math.deg(math.acos(dot))
+
+		if angle < 90 / 2 then
 			shouldMove = false
 			break
 		end
