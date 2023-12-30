@@ -170,9 +170,7 @@ runService.Heartbeat:Connect(function()
 
 		local dot = look:Dot(distance_from_player)
 
-		local angle = math.deg(math.acos(dot))
-
-		if angle < 70 / 2 then
+		if angle > 0.6 then
 			shouldMove = false
 			break
 		end
