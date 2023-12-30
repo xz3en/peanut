@@ -172,7 +172,7 @@ runService.Heartbeat:Connect(function()
 
 		local angle = math.deg(math.acos(dot))
 
-		if angle < 90 / 2 then
+		if angle < 70 / 2 then
 			shouldMove = false
 			break
 		end
